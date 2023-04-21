@@ -437,6 +437,80 @@ async function read() {
     document.getElementById("token_balance").innerText = web3.utils.fromWei(balance);
 }
 
+async function read_address_balance() {
+    var contractAddress = document.getElementById("contract_address").value;
+    var address  = document.getElementById("address").value;
+    var instance =  new web3.eth.Contract(erc20Abi, contractAddress);
+    var balance = await instance.methods.balanceOf(address).call();
+    document.getElementById("address_balance").innerText = web3.utils.fromWei(balance);
+}
+
+async function mint_token() {
+    var contractAddress = document.getElementById("contract_address").value;
+    var target = document.getElementById("target").value;
+    var amount = document.getElementById("amount").value;
+    var instance =  new web3.eth.Contract(erc20Abi, contractAddress);
+    var mintTokenData = instance.methods.mintToken(target, amount).encodeABI();
+
+    var estimateGasRes  = await web3.eth.estimateGas({
+        to: contractAddress,
+        data: mintTokenData,
+        from: accountAddress,
+        value:'0x0'
+    })
+
+    var gasPrice = await web3.eth.getGasPrice();
+    let nonce  =await web3.eth.getTransactionCount(accountAddress);
+    let rawTransaction = {
+        from: accountAddress,
+        to: contractAddress,
+        nonce: web3.utils.toHex(nonce),
+        gasPrice: gasPrice,
+        gas: estimateGasRes * 2,
+        value: '0x0',
+        data: mintTokenData,
+        chainId: chainId
+    }
+
+    web3.eth.sendTransaction(rawTransaction).on("transactionHash", function(hash) {
+        console.log("txHash:",hash);
+        document.getElementById("tx_hash").innerText  = hash;
+    })
+}
+
+async function burn_token() {
+    var contractAddress = document.getElementById("contract_address").value;
+    var target = document.getElementById("target").value;
+    var amount = document.getElementById("amount").value;
+    var instance =  new web3.eth.Contract(erc20Abi, contractAddress);
+    var burnTokenData = instance.methods.burnToken(target, amount).encodeABI();
+
+    var estimateGasRes  = await web3.eth.estimateGas({
+        to: contractAddress,
+        data: burnTokenData,
+        from: accountAddress,
+        value:'0x0'
+    })
+
+    var gasPrice = await web3.eth.getGasPrice();
+    let nonce  =await web3.eth.getTransactionCount(accountAddress);
+    let rawTransaction = {
+        from: accountAddress,
+        to: contractAddress,
+        nonce: web3.utils.toHex(nonce),
+        gasPrice: gasPrice,
+        gas: estimateGasRes * 2,
+        value: '0x0',
+        data: burnTokenData,
+        chainId: chainId
+    }
+
+    web3.eth.sendTransaction(rawTransaction).on("transactionHash", function(hash) {
+        console.log("txHash:",hash);
+        document.getElementById("tx_hash").innerText  = hash;
+    })
+}
+
 async function transfer() {
     var contractAddress  = document.getElementById("contract_address").value;
     var instance = new web3.eth.Contract(erc20Abi, contractAddress);

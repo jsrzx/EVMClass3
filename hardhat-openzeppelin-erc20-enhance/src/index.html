@@ -29,8 +29,20 @@
         <div>estimateGas: <span id="estimate_gas"></span></div>
         <div>gasPrice: <span id="gas_price"></span></div>
         <div>txHash: <span id="tx_hash"></span></div>
+
+        <hr />
+        <input type="text" id="address" />
+        <button onclick="read_address_balance()">Read address balance</button>
+        <div>balance: <span id="address_balance"></span></div>
+
+        <hr />
+        target: <input type="text" id="target" /><br>
+        amount: <input type="text" id="amount" /><br>
+        <button onclick="mint_token()">Mint token</button><br>
+        <button onclick="burn_token()">Burn token</button><br>
+
     </div>
     <script src="./js/web3.min.js"></script>
-    <script src="./js/app7.js"></script>
+    <script src="./js/app.js"></script>
 </body>
 </html>
